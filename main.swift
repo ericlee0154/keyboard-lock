@@ -15,6 +15,9 @@ let hotKeyCode = UInt32(kVK_ANSI_L)
 let hotKeyModifiers = UInt32(controlKey | optionKey | cmdKey)
 let hotKeyLabel = "⌃⌥⌘L"
 
+/// Whether the user wants the built-in keyboard locked; kept across quits and restarts.
+let wantLockedKey = "wantLocked"
+
 let builtInKeyboard = #"{"Built-In":true,"PrimaryUsagePage":1,"PrimaryUsage":6}"#
 
 /// Every usage the built-in keyboard can send: the keyboard page (letters to modifiers),
@@ -92,6 +95,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(.separator())
         menu.addItem(NSMenuItem(title: "Quit KeyboardLock", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         item.menu = menu
+
+        // Pick up where the last run left off: locked then means locked now, as soon as an
+        // external keyboard is there (after a login, a Bluetooth one may take a moment).
+        relockWhenBack = UserDefaults.standard.bool(forKey: wantLockedKey)
+        checkKeyboards()
         refresh()
 
         registerHotKey()
@@ -164,6 +172,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     func refresh() {
+        UserDefaults.standard.set(locked || relockWhenBack, forKey: wantLockedKey)
         let symbol = locked ? "lock.fill" : "keyboard"
         let image = NSImage(systemSymbolName: symbol, accessibilityDescription: locked ? "Built-in keyboard locked" : "Built-in keyboard on")
         image?.isTemplate = true

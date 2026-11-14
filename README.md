@@ -8,7 +8,8 @@ top of it. External keyboards and the trackpad keep working.
 - If the external keyboard disconnects, the built-in one comes back within two seconds, and is locked again when
   the external keyboard returns.
 - It won't lock when no external keyboard is connected.
-- Quitting unlocks. So does starting the app again, and a reboot.
+- Quitting unlocks, and so does a reboot. The app remembers that it was locked: started again, it locks as soon
+  as an external keyboard is connected.
 
 Touch ID / the power button is not affected.
 
@@ -29,3 +30,7 @@ hidutil property --matching '{"Built-In":true,"PrimaryUsagePage":1,"PrimaryUsage
 ```
 
 The hotkey is set at the top of `main.swift`.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
